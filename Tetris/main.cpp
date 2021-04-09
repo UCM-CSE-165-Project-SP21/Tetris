@@ -6,6 +6,7 @@ int main(int argc, char *argv[])
 {
 
     //Test commit Michael
+    //Test commit Alberto
 
     QApplication a(argc, argv);
     MainWindow w;
