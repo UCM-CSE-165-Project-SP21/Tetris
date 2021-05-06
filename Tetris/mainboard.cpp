@@ -26,6 +26,8 @@ void TetrisBoard::start()
         return;
     }
 
+    emit linesRemovedChanged(numLinesRemoved);
+
     isStarted = true;
     newPiece();
 }
@@ -43,7 +45,7 @@ void TetrisBoard::newPiece()
 {
     curPiece = nextPiece;
     nextPiece.setRandomShape();
-//    showNextPiece();
+    showNextPiece();
     curX = BoardWidth / 2 + 1;
     curY = BoardHeight - 1 + curPiece.minY();
 
@@ -54,26 +56,26 @@ void TetrisBoard::newPiece()
     }
 }
 
-//void TetrisBoard::showNextPiece()
-//{
-//    if (!nextPieceLabel)
-//        return;
+void TetrisBoard::showNextPiece()
+{
+    if (!nextPieceLabel)
+        return;
 
-//    int dx = nextPiece.maxX() - nextPiece.minX() + 1;
-//    int dy = nextPiece.maxY() - nextPiece.minY() + 1;
+    int dx = nextPiece.maxX() - nextPiece.minX() + 1;
+    int dy = nextPiece.maxY() - nextPiece.minY() + 1;
 
-//    QPixmap pixmap(dx * squareWidth(), dy * squareHeight());
-//    QPainter painter(&pixmap);
-//    painter.fillRect(pixmap.rect(), nextPieceLabel->palette().window());
+    QPixmap pixmap(dx * squareWidth(), dy * squareHeight());
+    QPainter painter(&pixmap);
+    painter.fillRect(pixmap.rect(), nextPieceLabel->palette().window());
 
-//    for (int i = 0; i < 4; ++i) {
-//        int x = nextPiece.x(i) - nextPiece.minX();
-//        int y = nextPiece.y(i) - nextPiece.minY();
-//        drawSquare(painter, x * squareWidth(), y * squareHeight(),
-//                   nextPiece.shape());
-//    }
-//    nextPieceLabel->setPixmap(pixmap);
-//}
+    for (int i = 0; i < 4; ++i) {
+        int x = nextPiece.x(i) - nextPiece.minX();
+        int y = nextPiece.y(i) - nextPiece.minY();
+        drawSquare(painter, x * squareWidth(), y * squareHeight(),
+                   nextPiece.shape());
+    }
+    nextPieceLabel->setPixmap(pixmap);
+}
 
 void TetrisBoard::paintEvent(QPaintEvent *event)
 {
@@ -166,18 +168,18 @@ void TetrisBoard::pieceDropped(int dropHeight)
     }
 
     ++numPiecesDropped;
-//    if (numPiecesDropped % 25 == 0) {
-//        ++level;
+    if (numPiecesDropped % 25 == 0) {
+        ++level;
 //        timer.start(timeoutTime(), this);
 //        emit levelChanged(level);
-//    }
+    }
 
-//    score += dropHeight + 7;
-//    emit scoreChanged(score);
-//    removeFullLines();
+    score += dropHeight + 7;
+    emit scoreChanged(score);
+    removeFullLines();
 
-//    if (!isWaitingAfterLine)
-//        newPiece();
+    if (!isWaitingAfterLine)
+        newPiece();
 }
 
 void TetrisBoard::oneLineDown()
@@ -198,6 +200,43 @@ void TetrisBoard::dropDown()
     }
     pieceDropped(dropHeight);
 
+}
+
+void TetrisBoard::removeFullLines()
+{
+    int numFullLines = 0;
+
+    for (int i = BoardHeight - 1; i >= 0; --i) {
+        bool lineIsFull = true;
+
+        for (int j = 0; j < BoardWidth; ++j) {
+            if (shapeAt(j, i) == empty_shape) {
+                lineIsFull = false;
+                break;
+            }
+        }
+
+        if (lineIsFull) {
+            ++numFullLines;
+            for (int k = i; k < BoardHeight - 1; ++k) {
+                for (int j = 0; j < BoardWidth; ++j)
+                    shapeAt(j, k) = shapeAt(j, k + 1);
+            }
+            for (int j = 0; j < BoardWidth; ++j)
+                shapeAt(j, BoardHeight - 1) = empty_shape;
+        }
+    }
+    if (numFullLines > 0) {
+        numLinesRemoved += numFullLines;
+        score += 10 * numFullLines;
+        emit linesRemovedChanged(numLinesRemoved);
+        emit scoreChanged(score);
+
+        timer.start(500, this);
+        isWaitingAfterLine = true;
+        curPiece.setShape(empty_shape);
+        update();
+    }
 }
 
 void TetrisBoard::drawSquare(QPainter &painter, int x, int y, shapes shape)

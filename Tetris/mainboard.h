@@ -23,9 +23,9 @@ public slots:
     void pause();
 
 signals:
-//    void scoreChanged(int score);
+    void scoreChanged(int score);
 //    void levelChanged(int level);
-//    void linesRemovedChanged(int numLines);
+    void linesRemovedChanged(int numLines);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
