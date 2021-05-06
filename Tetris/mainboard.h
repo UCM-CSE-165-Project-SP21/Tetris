@@ -30,13 +30,13 @@ signals:
 protected:
     void paintEvent(QPaintEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
-//    void timerEvent(QTimerEvent *event) override;
+    void timerEvent(QTimerEvent *event) override;
 
 private:
     enum { BoardWidth = 10, BoardHeight = 22 };
 
     shapes &shapeAt(int x, int y) { return board[(y * BoardWidth) + x]; }
-//    int timeoutTime() { return 1000 / (1 + level); }
+    int timeoutTime() { return 1000 / (1 + level); }
     int squareWidth() { return contentsRect().width() / BoardWidth; }
     int squareHeight() { return contentsRect().height() / BoardHeight; }
     void clearBoard();
@@ -61,7 +61,6 @@ private:
     shapes board[BoardWidth * BoardHeight];
     bool isStarted;
     bool isPaused;
-//    QBasicTimer timer;
     int score;
     int level;
 };

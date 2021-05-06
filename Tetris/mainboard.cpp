@@ -30,6 +30,7 @@ void TetrisBoard::start()
 
     isStarted = true;
     newPiece();
+    timer.start(timeoutTime(), this);
 }
 
 void TetrisBoard::pause()
@@ -51,7 +52,7 @@ void TetrisBoard::newPiece()
 
     if (!tryMove(curPiece, curX, curY)) {
         curPiece.setShape(empty_shape);
-//        timer.stop();
+        timer.stop();
         isStarted = false;
     }
 }
@@ -142,6 +143,21 @@ void TetrisBoard::keyPressEvent(QKeyEvent *event)
     }
 }
 
+void TetrisBoard::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() == timer.timerId()) {
+        if (isWaitingAfterLine) {
+            isWaitingAfterLine = false;
+            newPiece();
+            timer.start(timeoutTime(), this);
+        } else {
+            oneLineDown();
+        }
+    } else {
+        QFrame::timerEvent(event);
+    }
+}
+
 bool TetrisBoard::tryMove(const Piece &newPiece, int newX, int newY)
 {
     for (int i = 0; i < 4; ++i) {
@@ -170,7 +186,7 @@ void TetrisBoard::pieceDropped(int dropHeight)
     ++numPiecesDropped;
     if (numPiecesDropped % 25 == 0) {
         ++level;
-//        timer.start(timeoutTime(), this);
+        timer.start(timeoutTime(), this);
 //        emit levelChanged(level);
     }
 
