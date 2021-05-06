@@ -129,12 +129,12 @@ void TetrisBoard::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Up:
         tryMove(curPiece.rotatedLeft(), curX, curY);
         break;
-//    case Qt::Key_Space:
-//        dropDown();
-//        break;
-//    case Qt::Key_D:
-//        oneLineDown();
-//        break;
+    case Qt::Key_Space:
+        dropDown();
+        break;
+    case Qt::Key_D:
+        oneLineDown();
+        break;
     default:
         QFrame::keyPressEvent(event);
     }
@@ -155,6 +155,49 @@ bool TetrisBoard::tryMove(const Piece &newPiece, int newX, int newY)
     curY = newY;
     update();
     return true;
+}
+
+void TetrisBoard::pieceDropped(int dropHeight)
+{
+    for (int i = 0; i < 4; ++i) {
+        int x = curX + curPiece.x(i);
+        int y = curY - curPiece.y(i);
+        shapeAt(x, y) = curPiece.shape();
+    }
+
+    ++numPiecesDropped;
+//    if (numPiecesDropped % 25 == 0) {
+//        ++level;
+//        timer.start(timeoutTime(), this);
+//        emit levelChanged(level);
+//    }
+
+//    score += dropHeight + 7;
+//    emit scoreChanged(score);
+//    removeFullLines();
+
+//    if (!isWaitingAfterLine)
+//        newPiece();
+}
+
+void TetrisBoard::oneLineDown()
+{
+    if (!tryMove(curPiece, curX, curY - 1))
+        pieceDropped(0);
+}
+
+void TetrisBoard::dropDown()
+{
+    int dropHeight = 0;
+    int newY = curY;
+    while (newY > 0) {
+        if (!tryMove(curPiece, curX, newY - 1))
+            break;
+        --newY;
+        ++dropHeight;
+    }
+    pieceDropped(dropHeight);
+
 }
 
 void TetrisBoard::drawSquare(QPainter &painter, int x, int y, shapes shape)
