@@ -47,11 +47,11 @@ void TetrisBoard::newPiece()
     curX = BoardWidth / 2 + 1;
     curY = BoardHeight - 1 + curPiece.minY();
 
-//    if (!tryMove(curPiece, curX, curY)) {
-//        curPiece.setShape(empty_shape);
+    if (!tryMove(curPiece, curX, curY)) {
+        curPiece.setShape(empty_shape);
 //        timer.stop();
-//        isStarted = false;
-//    }
+        isStarted = false;
+    }
 }
 
 //void TetrisBoard::showNextPiece()
@@ -110,52 +110,52 @@ void TetrisBoard::paintEvent(QPaintEvent *event)
     }
 }
 
-//void TetrisBoard::keyPressEvent(QKeyEvent *event)
-//{
-//    if (!isStarted || isPaused || curPiece.shape() == empty_shape) {
-//        QFrame::keyPressEvent(event);
-//        return;
-//    }
-//    switch (event->key()) {
-//    case Qt::Key_Left:
-//        tryMove(curPiece, curX - 1, curY);
-//        break;
-//    case Qt::Key_Right:
-//        tryMove(curPiece, curX + 1, curY);
-//        break;
-//    case Qt::Key_Down:
-//        tryMove(curPiece.rotatedRight(), curX, curY);
-//        break;
-//    case Qt::Key_Up:
-//        tryMove(curPiece.rotatedLeft(), curX, curY);
-//        break;
+void TetrisBoard::keyPressEvent(QKeyEvent *event)
+{
+    if (!isStarted || isPaused || curPiece.shape() == empty_shape) {
+        QFrame::keyPressEvent(event);
+        return;
+    }
+    switch (event->key()) {
+    case Qt::Key_Left:
+        tryMove(curPiece, curX - 1, curY);
+        break;
+    case Qt::Key_Right:
+        tryMove(curPiece, curX + 1, curY);
+        break;
+    case Qt::Key_Down:
+        tryMove(curPiece.rotatedRight(), curX, curY);
+        break;
+    case Qt::Key_Up:
+        tryMove(curPiece.rotatedLeft(), curX, curY);
+        break;
 //    case Qt::Key_Space:
 //        dropDown();
 //        break;
 //    case Qt::Key_D:
 //        oneLineDown();
 //        break;
-//    default:
-//        QFrame::keyPressEvent(event);
-//    }
-//}
+    default:
+        QFrame::keyPressEvent(event);
+    }
+}
 
-//bool TetrisBoard::tryMove(const Piece &newPiece, int newX, int newY)
-//{
-//    for (int i = 0; i < 4; ++i) {
-//        int x = newX + newPiece.x(i);
-//        int y = newY - newPiece.y(i);
-//        if (x < 0 || x >= BoardWidth || y < 0 || y >= BoardHeight)
-//            return false;
-//        if (shapeAt(x, y) != empty_shape)
-//            return false;
-//    }
-//    curPiece = newPiece;
-//    curX = newX;
-//    curY = newY;
-//    update();
-//    return true;
-//}
+bool TetrisBoard::tryMove(const Piece &newPiece, int newX, int newY)
+{
+    for (int i = 0; i < 4; ++i) {
+        int x = newX + newPiece.x(i);
+        int y = newY - newPiece.y(i);
+        if (x < 0 || x >= BoardWidth || y < 0 || y >= BoardHeight)
+            return false;
+        if (shapeAt(x, y) != empty_shape)
+            return false;
+    }
+    curPiece = newPiece;
+    curX = newX;
+    curY = newY;
+    update();
+    return true;
+}
 
 void TetrisBoard::drawSquare(QPainter &painter, int x, int y, shapes shape)
 {
