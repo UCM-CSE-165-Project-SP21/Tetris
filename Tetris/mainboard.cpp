@@ -26,7 +26,12 @@ void TetrisBoard::start()
         return;
     }
 
+    score = 0;
+    level = 1;
+
     emit linesRemovedChanged(numLinesRemoved);
+    emit scoreChanged(score);
+    emit levelChanged(level);
 
     isStarted = true;
     newPiece();
@@ -187,7 +192,7 @@ void TetrisBoard::pieceDropped(int dropHeight)
     if (numPiecesDropped % 25 == 0) {
         ++level;
         timer.start(timeoutTime(), this);
-//        emit levelChanged(level);
+        emit levelChanged(level);
     }
 
     score += dropHeight + 7;

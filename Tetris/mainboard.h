@@ -24,7 +24,7 @@ public slots:
 
 signals:
     void scoreChanged(int score);
-//    void levelChanged(int level);
+    void levelChanged(int level);
     void linesRemovedChanged(int numLines);
 
 protected:
