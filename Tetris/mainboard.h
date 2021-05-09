@@ -14,7 +14,7 @@ class TetrisBoard : public QFrame
 
 public:
     TetrisBoard(QWidget *parent = nullptr);
-//    void setNextPieceLabel(QLabel *label);
+    void setNextPieceLabel(QLabel *label);
 //    QSize sizeHint() const override;
 //    QSize minimumSizeHint() const override;
 

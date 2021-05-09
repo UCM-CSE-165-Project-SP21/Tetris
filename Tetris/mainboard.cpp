@@ -20,6 +20,11 @@ void TetrisBoard::clearBoard()
         board[i] = empty_shape;
 }
 
+void TetrisBoard::setNextPieceLabel(QLabel *label)
+{
+    nextPieceLabel = label;
+}
+
 void TetrisBoard::start()
 {
     if (isPaused){

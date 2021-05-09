@@ -20,6 +20,11 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent), board(new TetrisBoard
      linesLCD = new QLCDNumber(5);
      linesLCD->setSegmentStyle(QLCDNumber::Filled);
 
+     nextPieceLabel = new QLabel;
+         nextPieceLabel->setFrameStyle(QFrame::Box | QFrame::Raised);
+         nextPieceLabel->setAlignment(Qt::AlignCenter);
+         board->setNextPieceLabel(nextPieceLabel);
+
     startButton = new QPushButton(tr("&Start"));
     startButton->setFocusPolicy(Qt::NoFocus);
 
@@ -42,8 +47,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent), board(new TetrisBoard
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(board, 0, 1, 6, 1);
     layout->addWidget(new QLabel(tr("NEXT")), 0, 0);
-    //un comment this line when we figure out how to set the next piece
-    //layout->addWidget(nextPiece, 1, 0);
+    layout->addWidget(nextPieceLabel, 1, 0);
     layout->addWidget(new QLabel(tr("LEVEL")), 2, 0);
     layout->addWidget(levelLCD, 3, 0);
     layout->addWidget(new QLabel(tr("SCORE")), 0, 2);
