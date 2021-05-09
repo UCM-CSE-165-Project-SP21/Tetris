@@ -33,6 +33,11 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent), board(new TetrisBoard
     connect(pauseButton, &QPushButton::clicked, board, &TetrisBoard::pause);
     connect(quitButton , &QPushButton::clicked, qApp, &QCoreApplication::quit);
 
+//    connect(board, &TetrisBoard::scoreChanged, scoreLCD, qOverload<int>(&QLCDNumber::display));
+    connect(board, &TetrisBoard::scoreChanged, scoreLCD, QOverload<int>::of(&QLCDNumber::display));
+    connect(board, &TetrisBoard::levelChanged, levelLCD, QOverload<int>::of(&QLCDNumber::display));
+        connect(board, &TetrisBoard::linesRemovedChanged, linesLCD, QOverload<int>::of(&QLCDNumber::display));
+
 
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(board, 0, 1, 6, 1);
