@@ -34,6 +34,7 @@ private:
     QLCDNumber *scoreLCD;
     QLCDNumber *levelLCD;
     QLCDNumber *linesLCD;
-    QLabel *nextPiece;
+    //QLabel *nextPiece;
+    QLabel *nextPieceLabel;
 };
 #endif // MAINWINDOW_H
