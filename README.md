@@ -6,21 +6,30 @@ The Objective of the project ...
 
 ### Features
 
-#### Feature 1 
-- as
-- as
+### Start
+-
+<img src="http://g.recordit.co/eWWU74GKsg.gif" width=250><br>
 
-#### Feature 2 
-- as
-- as
+### Clears Line
+-
+<img src="http://g.recordit.co/2zVLeVa8MC.gif" width=250><br>
 
-### App Walkthrough GIF
+### Pause
+-
+<img src="http://g.recordit.co/o37S9KHeDO.gif" width=250><br>
 
-<img src="http://g.recordit.co/RoL5iffLOF.gif" width=250><br>
+### Rotation
+-
+<img src="http://g.recordit.co/oA3DVAlY2j.gif" width=250><br>
 
-### Notes
-Describe any challenges encountered while building the app.
+### Game Over
+-
+<img src="http://g.recordit.co/oQ9sk5U0sJ.gif" width=250><br>
 
-The main challenge this time around was a syntax error that I had early on, that I did not catch due to not testing my program more frequently. The syntax error was when I upload the URL for the Superhero movies collection.
+
+### Resources
+QT Documentation: https://doc.qt.io/
+
+
 ---
 
