@@ -2,10 +2,16 @@
 #include <QKeyEvent>
 #include <QLabel>
 #include <QPainter>
+#include <QMediaPlayer>
 
 TetrisBoard::TetrisBoard(QWidget *parent)
     : QFrame(parent), isStarted(false), isPaused(false)
 {
+
+    backGroundMusic = new QMediaPlayer();
+    backGroundMusic->setMedia(QUrl("qrc:/music/Through The Fire and Flames [8 Bit Cover Tribute to Dragonforce] - 8 Bit Universe.mp3"));
+    backGroundMusic->setVolume(50);
+
     setFrameStyle(QFrame::Panel | QFrame::Sunken);
     setFocusPolicy(Qt::StrongFocus);
 
@@ -31,6 +37,7 @@ void TetrisBoard::start()
         return;
     }
     isStarted = true;
+    backGroundMusic->play();
 
     isWaitingAfterLine = false;
     numLinesRemoved = 0;

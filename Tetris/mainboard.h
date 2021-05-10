@@ -5,6 +5,7 @@
 #include <QPointer>
 #include <QBasicTimer>
 #include "mainpiece.h"
+#include <QMediaPlayer>
 
 //We can use QFrame to draw a frame within our widget
 //We can use this .h file to handle the in-game logic
@@ -63,6 +64,7 @@ private:
     bool isPaused;
     int score;
     int level;
+    QMediaPlayer *backGroundMusic;
 };
 
 
