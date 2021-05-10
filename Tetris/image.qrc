@@ -1,8 +1,0 @@
-<RCC>
-    <qresource prefix="/background">
-        <file>tetris-image.jpg</file>
-    </qresource>
-    <qresource prefix="/board-background">
-        <file>tetris_mainboard.jpg</file>
-    </qresource>
-</RCC>
