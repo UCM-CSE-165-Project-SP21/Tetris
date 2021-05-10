@@ -13,60 +13,63 @@ class TetrisBoard : public QFrame
 {
     Q_OBJECT
 
-public:
-    TetrisBoard(QWidget *parent = nullptr);
-    void setNextPieceLabel(QLabel *label);
-//    QSize sizeHint() const override;
-//    QSize minimumSizeHint() const override;
-
-public slots:
-    void start();
-    void pause();
-
-signals:
-    void scoreChanged(int score);
-    void levelChanged(int level);
-    void linesRemovedChanged(int numLines);
-
 protected:
-    void paintEvent(QPaintEvent *event) override;
-    void keyPressEvent(QKeyEvent *event) override;
-    void timerEvent(QTimerEvent *event) override;
+    //timer implementations
+    QBasicTimer timer; //used this library
+    void timerEvent(QTimerEvent *event) override; //timers to make moving object
+    int timeout() { return 1000 / (2 + level); } //shorter timeout when increasing level to increase difficulty
 
-private:
-    enum { BoardWidth = 10, BoardHeight = 22 };
-
-    shapes &shapeAt(int x, int y) { return board[(y * BoardWidth) + x]; }
-    int timeoutTime() { return 1000 / (1 + level); }
-    int squareWidth() { return contentsRect().width() / BoardWidth; }
-    int squareHeight() { return contentsRect().height() / BoardHeight; }
-    void clearBoard();
-    void dropDown();
-    void oneLineDown();
-    void pieceDropped(int dropHeight);
-    void removeFullLines();
-    void newPiece();
-    void showNextPiece();
-    bool tryMove(const Piece &newPiece, int newX, int newY);
-    void drawSquare(QPainter &painter, int x, int y, shapes shape);
-
-    QBasicTimer timer;
-    QPointer<QLabel> nextPieceLabel;
-    bool isWaitingAfterLine;
-    Piece curPiece;
+    //paint implementation (inspired from Qt Labs)
+    void paintEvent(QPaintEvent *event) override; //event used to paint the blocks
+    void drawBlock(QPainter &painter, int x, int y, shapes shape); //set blocks to specific RGB color
+    void createPiece(); // sets piece randomly
+    void showNextPiece(); //shows piece that follows from current piece
+    void clearBoard(); //cleans blocks in the main board
+    Piece currentPiece;
     Piece nextPiece;
-    int curX;
-    int curY;
-    int numLinesRemoved;
-    int numPiecesDropped;
-    shapes board[BoardWidth * BoardHeight];
-    bool isStarted;
+    int currentX;
+    int currentY;
+    QPointer<QLabel> nextPieceLabel;
+
+
+    //in-Game functions
+    void keyPressEvent(QKeyEvent *event) override; //triggers movement of the blocks
+    void dropDown(); //takes piece to the bottom
+    void oneLineDown(); //drops piece one line
+    void pieceDropped(int dropHeight); //current height of pieces in board
+    void removeFullLines();
+    bool tryMove(const Piece &newPiece, int newX, int newY); //when a key is pressed
+    bool isStarted; // true when game starts
     bool isPaused;
     bool isGameOver;
     int score;
     int level;
     QMediaPlayer *backGroundMusic;
+    int numLinesRemoved;
+    int numPiecesDropped;
+    bool isWaitingAfterLine;
+
+    //game dimension
+    enum { boardWidth = 10, boardHeight = 22 };
+    shapes &shapePosition(int x, int y) { return board[(y * boardWidth) + x]; }
+    int mainboardWidth() { return contentsRect().width() / boardWidth; }
+    int mainboardHeight() { return contentsRect().height() / boardHeight; }
+    shapes board[boardWidth * boardHeight];
+
+public:
+    TetrisBoard(QWidget *parent = nullptr);
+    void setNextPieceLabel(QLabel *label);  //variable holding name of the next piece to draw
+
+public slots:
+    void startGame();
     void GameOver();
+    void pauseGame();
+
+signals:
+    void changeScore(int currentScore);
+    void changeLevel(int currentLevel);
+    void linesRemovedChanged(int numLines);
+
 };
 
 

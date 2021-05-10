@@ -8,10 +8,12 @@ TetrisBoard::TetrisBoard(QWidget *parent)
     : QFrame(parent), isStarted(false), isPaused(false), isGameOver(false)
 {
 
+    /* initialied the music player and imported song*/
     backGroundMusic = new QMediaPlayer();
     backGroundMusic->setMedia(QUrl("qrc:/music/Through The Fire and Flames [8 Bit Cover Tribute to Dragonforce] - 8 Bit Universe.mp3"));
     backGroundMusic->setVolume(50);
 
+    /* Frame style for the shape of the pieces */
     setFrameStyle(QFrame::Panel | QFrame::Sunken);
     setFocusPolicy(Qt::StrongFocus);
 
@@ -22,7 +24,8 @@ TetrisBoard::TetrisBoard(QWidget *parent)
 
 void TetrisBoard::clearBoard()
 {
-    for (int i = 0; i < BoardHeight * BoardWidth; ++i)
+    /* removing blocks in the main board */
+    for (int i = 0; i < boardHeight * boardWidth; ++i)
         board[i] = empty_shape;
 }
 
@@ -31,7 +34,7 @@ void TetrisBoard::setNextPieceLabel(QLabel *label)
     nextPieceLabel = label;
 }
 
-void TetrisBoard::start()
+void TetrisBoard::startGame()
 {
     if (isPaused){
         return;
@@ -48,14 +51,15 @@ void TetrisBoard::start()
     clearBoard();
 
     emit linesRemovedChanged(numLinesRemoved);
-    emit scoreChanged(score);
-    emit levelChanged(level);
+    emit changeScore(score);
+    emit changeLevel(level);
 
-    newPiece();
-    timer.start(timeoutTime(), this);
+    /* create first piece and start timer */
+    createPiece();
+    timer.start(timeout(), this);
 }
 
-void TetrisBoard::pause()
+void TetrisBoard::pauseGame()
 {
     if (!isStarted){
         return;
@@ -68,7 +72,7 @@ void TetrisBoard::pause()
         backGroundMusic->pause();
     }
     else{
-        timer.start(timeoutTime(), this);
+        timer.start(timeout(), this);
         backGroundMusic->play();
     }
     update();
@@ -90,16 +94,17 @@ void TetrisBoard::GameOver()
 }
 
 
-void TetrisBoard::newPiece()
+void TetrisBoard::createPiece()
 {
-    curPiece = nextPiece;
+    currentPiece = nextPiece;
     nextPiece.setRandomShape();
     showNextPiece();
-    curX = BoardWidth / 2 + 1;
-    curY = BoardHeight - 1 + curPiece.minY();
+    currentX = boardWidth / 2 + 1;
+    currentY = boardHeight - 1 + currentPiece.getMinY();
 
-    if (!tryMove(curPiece, curX, curY)) {
-        curPiece.setShape(empty_shape);
+     /* When piece reaches the top */
+    if (!tryMove(currentPiece, currentX, currentY)) {
+        currentPiece.setShape(empty_shape);
         timer.stop();
         isStarted = false;
         GameOver();
@@ -111,17 +116,18 @@ void TetrisBoard::showNextPiece()
     if (!nextPieceLabel)
         return;
 
-    int dx = nextPiece.maxX() - nextPiece.minX() + 1;
-    int dy = nextPiece.maxY() - nextPiece.minY() + 1;
+    int dx = nextPiece.getMaxX() - nextPiece.getMinX() + 1;
+    int dy = nextPiece.getMaxY() - nextPiece.getMinY() + 1;
 
-    QPixmap pixmap(dx * squareWidth(), dy * squareHeight());
+    /* triggers paint event at coordinates x and y*/
+    QPixmap pixmap(dx * mainboardWidth(), dy * mainboardHeight());
     QPainter painter(&pixmap);
     painter.fillRect(pixmap.rect(), nextPieceLabel->palette().window());
 
     for (int i = 0; i < 4; ++i) {
-        int x = nextPiece.x(i) - nextPiece.minX();
-        int y = nextPiece.y(i) - nextPiece.minY();
-        drawSquare(painter, x * squareWidth(), y * squareHeight(),
+        int x = nextPiece.getX(i) - nextPiece.getMinX();
+        int y = nextPiece.getY(i) - nextPiece.getMinY();
+        drawBlock(painter, x * mainboardWidth(), y * mainboardHeight(),
                    nextPiece.shape());
     }
     nextPieceLabel->setPixmap(pixmap);
@@ -146,47 +152,46 @@ void TetrisBoard::paintEvent(QPaintEvent *event)
         return;
     }
 
-    int boardTop = rect.bottom() - BoardHeight*squareHeight();
+    int boardTop = rect.bottom() - boardHeight*mainboardHeight();
 
-    for (int i = 0; i < BoardHeight; ++i) {
-        for (int j = 0; j < BoardWidth; ++j) {
-            shapes shape = shapeAt(j, BoardHeight - i - 1);
+    /* draws the main board */
+    for (int i = 0; i < boardHeight; ++i) {
+        for (int j = 0; j < boardWidth; ++j) {
+            shapes shape = shapePosition(j, boardHeight - i - 1);
             if (shape != empty_shape)
-                drawSquare(painter, rect.left() + j * squareWidth(),
-                           boardTop + i * squareHeight(), shape);
+                drawBlock(painter, rect.left() + j * mainboardWidth(), boardTop + i * mainboardHeight(), shape);
         }
 
     }
 
-    if (curPiece.shape() != empty_shape) {
+    /* draws blocks */
+    if (currentPiece.shape() != empty_shape) {
         for (int i = 0; i < 4; ++i) {
-            int x = curX + curPiece.x(i);
-            int y = curY - curPiece.y(i);
-            drawSquare(painter, rect.left() + x * squareWidth(),
-                       boardTop + (BoardHeight - y - 1) * squareHeight(),
-                       curPiece.shape());
+            int x = currentX + currentPiece.getX(i);
+            int y = currentY - currentPiece.getY(i);
+            drawBlock(painter, rect.left() + x * mainboardWidth(), boardTop + (boardHeight - y - 1) * mainboardHeight(), currentPiece.shape());
         }
     }
 }
 
 void TetrisBoard::keyPressEvent(QKeyEvent *event)
 {
-    if (!isStarted || isPaused || curPiece.shape() == empty_shape) {
+    if (!isStarted || isPaused || currentPiece.shape() == empty_shape) {
         QFrame::keyPressEvent(event);
         return;
     }
     switch (event->key()) {
     case Qt::Key_Left:
-        tryMove(curPiece, curX - 1, curY);
+        tryMove(currentPiece, currentX - 1, currentY);
         break;
     case Qt::Key_Right:
-        tryMove(curPiece, curX + 1, curY);
+        tryMove(currentPiece, currentX + 1, currentY);
         break;
     case Qt::Key_Down:
-        tryMove(curPiece.rotatedRight(), curX, curY);
+        tryMove(currentPiece.rotateRight(), currentX, currentY);
         break;
     case Qt::Key_Up:
-        tryMove(curPiece.rotatedLeft(), curX, curY);
+        tryMove(currentPiece.rotateLeft(), currentX, currentY);
         break;
     case Qt::Key_Space:
         dropDown();
@@ -201,11 +206,12 @@ void TetrisBoard::keyPressEvent(QKeyEvent *event)
 
 void TetrisBoard::timerEvent(QTimerEvent *event)
 {
+    /* when pieces collide new piece is created else move one line */
     if (event->timerId() == timer.timerId()) {
         if (isWaitingAfterLine) {
             isWaitingAfterLine = false;
-            newPiece();
-            timer.start(timeoutTime(), this);
+            createPiece();
+            timer.start(timeout(), this);
         } else {
             oneLineDown();
         }
@@ -214,58 +220,60 @@ void TetrisBoard::timerEvent(QTimerEvent *event)
     }
 }
 
-bool TetrisBoard::tryMove(const Piece &newPiece, int newX, int newY)
+bool TetrisBoard::tryMove(const Piece &createPiece, int newX, int newY)
 {
+    /* collision logic using piece coordinates and board dimensions */
     for (int i = 0; i < 4; ++i) {
-        int x = newX + newPiece.x(i);
-        int y = newY - newPiece.y(i);
-        if (x < 0 || x >= BoardWidth || y < 0 || y >= BoardHeight)
+        int x = newX + createPiece.getX(i);
+        int y = newY - createPiece.getY(i);
+        if (x < 0 || x >= boardWidth || y < 0 || y >= boardHeight)
             return false;
-        if (shapeAt(x, y) != empty_shape)
+        if (shapePosition(x, y) != empty_shape)
             return false;
     }
-    curPiece = newPiece;
-    curX = newX;
-    curY = newY;
+    currentPiece = createPiece;
+    currentX = newX;
+    currentY = newY;
     update();
     return true;
 }
 
 void TetrisBoard::pieceDropped(int dropHeight)
 {
+    /* pieces dropped logic */
     for (int i = 0; i < 4; ++i) {
-        int x = curX + curPiece.x(i);
-        int y = curY - curPiece.y(i);
-        shapeAt(x, y) = curPiece.shape();
+        int x = currentX + currentPiece.getX(i);
+        int y = currentY - currentPiece.getY(i);
+        shapePosition(x, y) = currentPiece.shape();
     }
 
     ++numPiecesDropped;
     if (numPiecesDropped % 25 == 0) {
         ++level;
-        timer.start(timeoutTime(), this);
-        emit levelChanged(level);
+        timer.start(timeout(), this);
+        emit changeLevel(level);
     }
 
     score += dropHeight + 7;
-    emit scoreChanged(score);
+    emit changeScore(score);
     removeFullLines();
 
     if (!isWaitingAfterLine)
-        newPiece();
+        createPiece();
 }
 
 void TetrisBoard::oneLineDown()
 {
-    if (!tryMove(curPiece, curX, curY - 1))
+    if (!tryMove(currentPiece, currentX, currentY - 1))
         pieceDropped(0);
 }
 
 void TetrisBoard::dropDown()
 {
     int dropHeight = 0;
-    int newY = curY;
+    int newY = currentY;
     while (newY > 0) {
-        if (!tryMove(curPiece, curX, newY - 1))
+        if (!tryMove(currentPiece, currentX, newY - 1))
             break;
         --newY;
         ++dropHeight;
@@ -278,58 +286,61 @@ void TetrisBoard::removeFullLines()
 {
     int numFullLines = 0;
 
-    for (int i = BoardHeight - 1; i >= 0; --i) {
+    /* iterate through the height of the board to check if any lines have been filled */
+    for (int i = boardHeight - 1; i >= 0; --i) {
         bool lineIsFull = true;
 
-        for (int j = 0; j < BoardWidth; ++j) {
-            if (shapeAt(j, i) == empty_shape) {
+        for (int j = 0; j < boardWidth; ++j) {
+            if (shapePosition(j, i) == empty_shape) {
                 lineIsFull = false;
                 break;
             }
         }
 
+        /* remove lines when they are full */
+
         if (lineIsFull) {
             ++numFullLines;
-            for (int k = i; k < BoardHeight - 1; ++k) {
-                for (int j = 0; j < BoardWidth; ++j)
-                    shapeAt(j, k) = shapeAt(j, k + 1);
+            for (int k = i; k < boardHeight - 1; ++k) {
+                for (int j = 0; j < boardWidth; ++j)
+                    shapePosition(j, k) = shapePosition(j, k + 1);
             }
-            for (int j = 0; j < BoardWidth; ++j)
-                shapeAt(j, BoardHeight - 1) = empty_shape;
+            for (int j = 0; j < boardWidth; ++j)
+                shapePosition(j, boardHeight - 1) = empty_shape;
         }
     }
+    /* update score and lines LCD screens */
     if (numFullLines > 0) {
         numLinesRemoved += numFullLines;
         score += 10 * numFullLines;
         emit linesRemovedChanged(numLinesRemoved);
-        emit scoreChanged(score);
+        emit changeScore(score);
 
         timer.start(500, this);
         isWaitingAfterLine = true;
-        curPiece.setShape(empty_shape);
+        currentPiece.setShape(empty_shape);
         update();
     }
 }
 
-void TetrisBoard::drawSquare(QPainter &painter, int x, int y, shapes shape)
+void TetrisBoard::drawBlock(QPainter &painter, int x, int y, shapes shape)
 { 
+    /* set color to the blocks */
     static constexpr QRgb colorTable[8] = {
             0x000000, 0xff0000, 0x00ff00, 0x00ffff,
             0x800080, 0xffff00, 0x0000ff, 0xff7f00
         };
 
+    /* apply color to the shape */
     QColor color = colorTable[int(shape)];
-    painter.fillRect(x + 1, y + 1, squareWidth() - 2, squareHeight() - 2,
-                     color);
+    painter.fillRect(x + 1, y + 1, mainboardWidth() - 2, mainboardHeight() - 2, color);
 
     painter.setPen(color.lighter());
-    painter.drawLine(x, y + squareHeight() - 1, x, y);
-    painter.drawLine(x, y, x + squareWidth() - 1, y);
+    painter.drawLine(x, y + mainboardHeight() - 1, x, y);
+    painter.drawLine(x, y, x + mainboardWidth() - 1, y);
 
     painter.setPen(color.darker());
-    painter.drawLine(x + 1, y + squareHeight() - 1,
-                     x + squareWidth() - 1, y + squareHeight() - 1);
-    painter.drawLine(x + squareWidth() - 1, y + squareHeight() - 1,
-                     x + squareWidth() - 1, y + 1);
+    painter.drawLine(x + 1, y + mainboardHeight() - 1, x + mainboardWidth() - 1, y + mainboardHeight() - 1);
+    painter.drawLine(x + mainboardWidth() - 1, y + mainboardHeight() - 1, x + mainboardWidth() - 1, y + 1);
 }
 

@@ -34,13 +34,13 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent), board(new TetrisBoard
     pauseButton = new QPushButton(tr("&Pause"));
     pauseButton->setFocusPolicy(Qt::NoFocus);
 
-    connect(startButton, &QPushButton::clicked, board, &TetrisBoard::start);
-    connect(pauseButton, &QPushButton::clicked, board, &TetrisBoard::pause);
+    connect(startButton, &QPushButton::clicked, board, &TetrisBoard::startGame);
+    connect(pauseButton, &QPushButton::clicked, board, &TetrisBoard::pauseGame);
     connect(quitButton , &QPushButton::clicked, qApp, &QCoreApplication::quit);
 
 //    connect(board, &TetrisBoard::scoreChanged, scoreLCD, qOverload<int>(&QLCDNumber::display));
-    connect(board, &TetrisBoard::scoreChanged, scoreLCD, QOverload<int>::of(&QLCDNumber::display));
-    connect(board, &TetrisBoard::levelChanged, levelLCD, QOverload<int>::of(&QLCDNumber::display));
+    connect(board, &TetrisBoard::changeScore, scoreLCD, QOverload<int>::of(&QLCDNumber::display));
+    connect(board, &TetrisBoard::changeLevel, levelLCD, QOverload<int>::of(&QLCDNumber::display));
         connect(board, &TetrisBoard::linesRemovedChanged, linesLCD, QOverload<int>::of(&QLCDNumber::display));
 
     QGridLayout *layout = new QGridLayout;
@@ -48,12 +48,14 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent), board(new TetrisBoard
 //    scoreLCD->setStyleSheet("background-image: url(:/background/tetris-image.jpg);");
 //    board->setStyleSheet("background-image: url(:/board-background/tetris_mainboard.jpg) no-repeat center center fixed;");
 
+     //customizing widgets
     this->setStyleSheet("background: rgb(14, 207, 207)");
     board->setStyleSheet("background-color: rgb(140, 225, 225)");
     startButton->setStyleSheet("background-color: light gray");
     pauseButton->setStyleSheet("background-color: light gray");
     quitButton->setStyleSheet("background-color: light gray");
 
+    //adding widgets to the layout
     layout->addWidget(new QLabel(tr("NEXT")), 0, 0);
     layout->addWidget(nextPieceLabel, 1, 0);
     layout->addWidget(new QLabel(tr("LEVEL")), 2, 0);
@@ -66,6 +68,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent), board(new TetrisBoard
     layout->addWidget(quitButton, 4, 2);
     layout->addWidget(pauseButton, 5, 2);
 
+    //customizing widgets
     scoreLCD->setStyleSheet("background-color: rgb(140, 225, 225); color: white;");
     levelLCD->setStyleSheet("background-color: rgb(140, 225, 225); color: white;");
     linesLCD->setStyleSheet("background-color: rgb(140, 225, 225); color: white;");

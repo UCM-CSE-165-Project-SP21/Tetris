@@ -255,8 +255,7 @@ Makefile: ../Tetris/Tetris.pro C:/Qt/5.15.2/mingw81_64/mkspecs/win32-g++/qmake.c
 		C:/Qt/5.15.2/mingw81_64/lib/Qt5Core.prl \
 		C:/Qt/5.15.2/mingw81_64/lib/qtmain.prl \
 		C:/Qt/5.15.2/mingw81_64/mkspecs/features/build_pass.prf \
-		../Tetris/audio.qrc \
-		../Tetris/image.qrc
+		../Tetris/audio.qrc
 	$(QMAKE) -o Makefile ..\Tetris\Tetris.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"
 C:/Qt/5.15.2/mingw81_64/mkspecs/features/spec_pre.prf:
 C:/Qt/5.15.2/mingw81_64/mkspecs/qdevice.pri:
@@ -444,7 +443,6 @@ C:/Qt/5.15.2/mingw81_64/lib/Qt5Core.prl:
 C:/Qt/5.15.2/mingw81_64/lib/qtmain.prl:
 C:/Qt/5.15.2/mingw81_64/mkspecs/features/build_pass.prf:
 ../Tetris/audio.qrc:
-../Tetris/image.qrc:
 qmake: FORCE
 	@$(QMAKE) -o Makefile ..\Tetris\Tetris.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"
 

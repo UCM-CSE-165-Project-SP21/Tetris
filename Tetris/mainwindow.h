@@ -27,6 +27,8 @@ public:
 
 private:
     //Ui::MainWindow *ui;
+
+    //layout widgets
     TetrisBoard *board;
     QPushButton *startButton;
     QPushButton *pauseButton;
@@ -34,7 +36,6 @@ private:
     QLCDNumber *scoreLCD;
     QLCDNumber *levelLCD;
     QLCDNumber *linesLCD;
-    //QLabel *nextPiece;
     QLabel *nextPieceLabel;
     QImage *background;
 };
