@@ -5,7 +5,7 @@
 #include <QMediaPlayer>
 
 TetrisBoard::TetrisBoard(QWidget *parent)
-    : QFrame(parent), isStarted(false), isPaused(false)
+    : QFrame(parent), isStarted(false), isPaused(false), isGameOver(false)
 {
 
     backGroundMusic = new QMediaPlayer();
@@ -74,6 +74,22 @@ void TetrisBoard::pause()
     update();
 }
 
+void TetrisBoard::GameOver()
+{
+    isGameOver = true;
+
+    if(isGameOver){
+        timer.stop();
+        backGroundMusic->stop();
+
+        //isGameOver = false;
+
+    }
+
+    update();
+}
+
+
 void TetrisBoard::newPiece()
 {
     curPiece = nextPiece;
@@ -86,6 +102,7 @@ void TetrisBoard::newPiece()
         curPiece.setShape(empty_shape);
         timer.stop();
         isStarted = false;
+        GameOver();
     }
 }
 
@@ -119,6 +136,13 @@ void TetrisBoard::paintEvent(QPaintEvent *event)
 
     if (isPaused) {
         painter.drawText(rect, Qt::AlignCenter, tr("Pause"));
+        return;
+    }
+    if(isGameOver){
+        clearBoard();
+        painter.drawText(rect, Qt::AlignCenter, tr("GAME OVER"));
+        //clearBoard();
+        isGameOver = false;
         return;
     }
 

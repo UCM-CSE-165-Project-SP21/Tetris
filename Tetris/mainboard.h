@@ -62,9 +62,11 @@ private:
     shapes board[BoardWidth * BoardHeight];
     bool isStarted;
     bool isPaused;
+    bool isGameOver;
     int score;
     int level;
     QMediaPlayer *backGroundMusic;
+    void GameOver();
 };
 
 
