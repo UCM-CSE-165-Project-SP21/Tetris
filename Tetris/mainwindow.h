@@ -36,5 +36,6 @@ private:
     QLCDNumber *linesLCD;
     //QLabel *nextPiece;
     QLabel *nextPieceLabel;
+    QImage *background;
 };
 #endif // MAINWINDOW_H

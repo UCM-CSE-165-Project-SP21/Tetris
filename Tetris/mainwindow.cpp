@@ -43,10 +43,17 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent), board(new TetrisBoard
     connect(board, &TetrisBoard::levelChanged, levelLCD, QOverload<int>::of(&QLCDNumber::display));
         connect(board, &TetrisBoard::linesRemovedChanged, linesLCD, QOverload<int>::of(&QLCDNumber::display));
 
-
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(board, 0, 1, 6, 1);
-    board->setStyleSheet("background-color: black");
+//    scoreLCD->setStyleSheet("background-image: url(:/background/tetris-image.jpg);");
+//    board->setStyleSheet("background-image: url(:/board-background/tetris_mainboard.jpg) no-repeat center center fixed;");
+
+    this->setStyleSheet("background: rgb(14, 207, 207)");
+    board->setStyleSheet("background-color: rgb(140, 225, 225)");
+    startButton->setStyleSheet("background-color: light gray");
+    pauseButton->setStyleSheet("background-color: light gray");
+    quitButton->setStyleSheet("background-color: light gray");
+
     layout->addWidget(new QLabel(tr("NEXT")), 0, 0);
     layout->addWidget(nextPieceLabel, 1, 0);
     layout->addWidget(new QLabel(tr("LEVEL")), 2, 0);
@@ -58,6 +65,12 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent), board(new TetrisBoard
     layout->addWidget(startButton, 4, 0);
     layout->addWidget(quitButton, 4, 2);
     layout->addWidget(pauseButton, 5, 2);
+
+    scoreLCD->setStyleSheet("background-color: rgb(140, 225, 225); color: white;");
+    levelLCD->setStyleSheet("background-color: rgb(140, 225, 225); color: white;");
+    linesLCD->setStyleSheet("background-color: rgb(140, 225, 225); color: white;");
+    nextPieceLabel->setStyleSheet("background-color: rgb(140, 225, 225); color: white;");
+
     setLayout(layout);
 
     setWindowTitle(tr("TETRIS"));
