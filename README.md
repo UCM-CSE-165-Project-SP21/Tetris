@@ -1,6 +1,6 @@
-# CSE 165 Final Project
+# Spring 2021 CSE 165 Final Project
 ## Tetris
-## By: Alberto Valle, Michael Cheung, Moises Limon
+## By: Alberto Valle, Michael Cheung, Moises Limon (Lab02)
 
 The Objective of the project ...
 
