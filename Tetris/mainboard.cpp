@@ -30,15 +30,20 @@ void TetrisBoard::start()
     if (isPaused){
         return;
     }
+    isStarted = true;
+
+    isWaitingAfterLine = false;
+    numLinesRemoved = 0;
+    numPiecesDropped = 0;
 
     score = 0;
     level = 1;
+    clearBoard();
 
     emit linesRemovedChanged(numLinesRemoved);
     emit scoreChanged(score);
     emit levelChanged(level);
 
-    isStarted = true;
     newPiece();
     timer.start(timeoutTime(), this);
 }
@@ -50,6 +55,14 @@ void TetrisBoard::pause()
     }
 
     isPaused = !isPaused;
+
+    if(isPaused){
+        timer.stop();
+    }
+    else{
+        timer.start(timeoutTime(), this);
+    }
+    update();
 }
 
 void TetrisBoard::newPiece()
@@ -266,11 +279,11 @@ void TetrisBoard::removeFullLines()
 }
 
 void TetrisBoard::drawSquare(QPainter &painter, int x, int y, shapes shape)
-{
+{ 
     static constexpr QRgb colorTable[8] = {
-        0x000000, 0xCC6666, 0x66CC66, 0x6666CC,
-        0xCCCC66, 0xCC66CC, 0x66CCCC, 0xDAAA00
-    };
+            0x000000, 0xff0000, 0x00ff00, 0x00ffff,
+            0x800080, 0xffff00, 0x0000ff, 0xff7f00
+        };
 
     QColor color = colorTable[int(shape)];
     painter.fillRect(x + 1, y + 1, squareWidth() - 2, squareHeight() - 2,

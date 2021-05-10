@@ -46,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent), board(new TetrisBoard
 
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(board, 0, 1, 6, 1);
+    board->setStyleSheet("background-color: black");
     layout->addWidget(new QLabel(tr("NEXT")), 0, 0);
     layout->addWidget(nextPieceLabel, 1, 0);
     layout->addWidget(new QLabel(tr("LEVEL")), 2, 0);
