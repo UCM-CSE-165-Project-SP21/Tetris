@@ -65,9 +65,11 @@ void TetrisBoard::pause()
 
     if(isPaused){
         timer.stop();
+        backGroundMusic->pause();
     }
     else{
         timer.start(timeoutTime(), this);
+        backGroundMusic->play();
     }
     update();
 }
