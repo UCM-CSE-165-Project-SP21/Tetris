@@ -2,7 +2,7 @@
 ## Tetris
 ## By: Alberto Valle, Michael Cheung, Moises Limon (Lab02)
 
-The Objective of the project ...
+Our project aimed to emulate the classic 1985 game, Tetris. Tetris is most famous for its release on the Nintendo Entertainment System (NES). We set a goal that by the end of this project, we would successfully create a Tetris clone, using QT Creator, that would feature all of the original Tetriminos (Tetris shapes), while implementing all the basic in game functions.
 
 ### Features
 
